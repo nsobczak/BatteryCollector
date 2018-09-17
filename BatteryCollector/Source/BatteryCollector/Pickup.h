@@ -18,12 +18,21 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	/** return the mesh for the pickupk*/
+	/** return the mesh for the pickup*/
 	FORCEINLINE class UStaticMeshComponent* GetMesh() const { return PickupMesh; }
+
+	UFUNCTION(BlueprintPure, Category = "Pickup")
+		bool IsActive();
+
+	UFUNCTION(BlueprintCallable, Category = "Pickup")
+		void SetActive(bool newPickupState);
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	/** true when pickup is used, and false when it is deactivated*/
+	bool bIsActive;
 
 private:
 	/** Static mesh to represent the pickup in the level*/
