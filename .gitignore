@@ -1,0 +1,12 @@
+
+BatteryCollector/\.idea/
+
+BatteryCollector/\.vs/
+
+BatteryCollector/cmake-build-debug/
+
+BatteryCollector/Binaries/
+
+BatteryCollector/Intermediate/
+
+BatteryCollector/Saved/

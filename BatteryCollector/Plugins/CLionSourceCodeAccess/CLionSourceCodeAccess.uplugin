@@ -1,0 +1,32 @@
+{
+	"FileVersion" : 3,
+	"EngineVersion" : "4.18.0",
+	"Version" : 107,
+	"VersionName" : "1.07",
+	"FriendlyName" : "CLion Integration",
+	"Description" : "Allows access to source code in CLion.",
+	"Category" : "Programming",
+	"CreatedBy" : "dotBunny, Inc.",
+	"CreatedByURL" : "http://dotbunny.com",
+	"DocsURL" : "https://github.com/dotBunny/CLionSourceCodeAccess/wiki",
+	"MarketplaceURL" : "com.epicgames.launcher://ue/marketplace/content/7a2e6de4c71a48c7b9df5f49b73e1a09",
+	"SupportURL" : "https://github.com/dotBunny/CLionSourceCodeAccess/issues",
+	"EnabledByDefault" : true,
+	"CanContainContent" : false,
+	"IsBetaVersion" : false,
+	"Installed" : false,
+	"Modules" :
+	[
+		{
+			"Name" : "CLionSourceCodeAccess",
+			"Type" : "Editor",
+			"LoadingPhase" : "PostEngineInit",
+			"WhitelistPlatforms" :
+			[
+				"Mac",
+				"Linux",
+				"Win64"
+			]
+		}
+	]
+}
