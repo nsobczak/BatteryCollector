@@ -18,10 +18,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
 	/**Returns where to spawn subobject*/
 	FORCEINLINE class UBoxComponent* GetWhereToSpawn() const { return WhereToSpawn; }
 
@@ -29,12 +25,33 @@ protected:
 	UFUNCTION(BlueprintPure, Category = "Spawning")
 		FVector	GetRandomPointInVolume();
 
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+	/**The pickup to spawn*/
+	UPROPERTY(EditAnywhere, Category = "Spawning")
+	TSubclassOf<class APickup> WhatToSpawn;
+
+	FTimerHandle SpawnTimer; //timer can't be properties
+
+	/**minimum spwan delay*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawning")
+		float SpawnDelayRangeLow;
+
+	/**maximum spwan delay*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawning")
+		float SpawnDelayRangeHigh;
+
 private:
 	/** Box compnent to specify where pickups should be spawned*/
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spawning", meta = (AllowPrivateAccess = "true"))
 		class UBoxComponent * WhereToSpawn;
 
+	/**handle spawning a new pickup*/
+	void SpawnPickup();
 
-
+	/**current spawn delay*/
+	float CurrentSpawnDelay;
 
 };
