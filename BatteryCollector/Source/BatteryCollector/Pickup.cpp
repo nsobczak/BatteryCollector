@@ -14,7 +14,7 @@ APickup::APickup()
 
 	//create the static mesh component
 	PickupMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PickupMesh"));
-	RootComponent = PickupMesh;
+	RootComponent = (USceneComponent*) PickupMesh;
 }
 
 // Called when the game starts or when spawned
