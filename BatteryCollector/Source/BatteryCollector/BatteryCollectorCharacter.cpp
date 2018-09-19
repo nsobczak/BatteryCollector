@@ -4,10 +4,13 @@
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/SphereComponent.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+//#include "Runtime/Engine/Public/DrawDebugHelpers.h"
+#include "Pickup.h"
 
 //////////////////////////////////////////////////////////////////////////
 // ABatteryCollectorCharacter
@@ -43,6 +46,13 @@ ABatteryCollectorCharacter::ABatteryCollectorCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+	//Create the collection sphere
+	CollectionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("CollectionSphere"));
+	CollectionSphere->SetupAttachment(RootComponent);
+	CollectionSphere->SetSphereRadius(200.0f);
+	//UE_LOG(LogClass, Log, TEXT("get scaled sphere radius = %s"), *FString::FromInt(CollectionSphere->GetScaledSphereRadius()));
+
+	//DrawDebugSphere(GetWorld(), CollectionSphere->GetComponentLocation(), CollectionSphere->GetScaledSphereRadius(), 20, FColor::Red);
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 }
@@ -56,6 +66,8 @@ void ABatteryCollectorCharacter::SetupPlayerInputComponent(class UInputComponent
 	check(PlayerInputComponent);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+
+	PlayerInputComponent->BindAction("Collect", IE_Released, this, &ABatteryCollectorCharacter::CollectPickups);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &ABatteryCollectorCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ABatteryCollectorCharacter::MoveRight);
@@ -84,12 +96,12 @@ void ABatteryCollectorCharacter::OnResetVR()
 
 void ABatteryCollectorCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
 {
-		Jump();
+	Jump();
 }
 
 void ABatteryCollectorCharacter::TouchStopped(ETouchIndex::Type FingerIndex, FVector Location)
 {
-		StopJumping();
+	StopJumping();
 }
 
 void ABatteryCollectorCharacter::TurnAtRate(float Rate)
@@ -120,15 +132,38 @@ void ABatteryCollectorCharacter::MoveForward(float Value)
 
 void ABatteryCollectorCharacter::MoveRight(float Value)
 {
-	if ( (Controller != NULL) && (Value != 0.0f) )
+	if ((Controller != NULL) && (Value != 0.0f))
 	{
 		// find out which way is right
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
-	
+
 		// get right vector 
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
+	}
+}
+
+
+void ABatteryCollectorCharacter::CollectPickups()
+{
+	//get overlaping actors and store them in an array
+	TArray<AActor*> collectedActors;
+	CollectionSphere->GetOverlappingActors(collectedActors);
+
+	//for each actor we collected
+	for (int32 iCollected = 0; iCollected < collectedActors.Num(); ++iCollected)
+	{
+		//cast the actor to apickup
+		APickup* const castedPickup = Cast<APickup>(collectedActors[iCollected]);
+		//if cast succesful and pickup is valid and active
+		if (castedPickup && !castedPickup->IsPendingKill() && castedPickup->IsActive())
+		{
+			//call the pickup's wasCollected function
+			castedPickup->WasCollected();
+			//deactivate the pickup
+			castedPickup->SetActive(false);
+		}
 	}
 }
