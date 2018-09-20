@@ -87,8 +87,20 @@ protected:
 		void CollectPickups();
 
 	/**called when we press a key to collect any pickups inside the CollectionSphere*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Power")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Power", Meta = (BlueprintProtected = "true"))
 		float InitialPower;
+
+	/**multiplier for character speed*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Power", Meta = (BlueprintProtected = "true"))
+		float SpeedFactor;
+
+	/**speed when power level = 0*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Power", Meta = (BlueprintProtected = "true"))
+		float BaseSpeed;
+
+	//BlueprintImplementableEvent = we don't need to define function in code at all, just call it and let the blueprint define it
+	UFUNCTION(BlueprintImplementableEvent, Category = "Power")
+		void PowerChangeEffect();
 
 private:
 	/**current power level of our character*/
