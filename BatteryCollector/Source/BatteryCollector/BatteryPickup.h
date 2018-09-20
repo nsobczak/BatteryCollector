@@ -7,17 +7,25 @@
 #include "BatteryPickup.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class BATTERYCOLLECTOR_API ABatteryPickup : public APickup
 {
 	GENERATED_BODY()
-	
+
 public:
 	// Sets default values for this actor's properties
 	ABatteryPickup();
-	
+
 	/**Override the wasCollected function, use Implementation cause it's a blueprint native event*/
-	void WasCollected_Implementation() override ;
+	void WasCollected_Implementation() override;
+
+	/**accessor*/
+	float GetPower();
+
+protected:
+	/**set the amount of power the battery gives to the character*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Power", Meta = (BlueprintProtected = "true"))
+		float BatteryPower;
 };
