@@ -13,6 +13,14 @@ class ABatteryCollectorGameMode : public AGameModeBase
 
 public:
 	ABatteryCollectorGameMode();
+
+	virtual void Tick(float DeltaTime) override;
+
+protected:
+	/**rate at wich the character loses power*/
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Power")
+		float DecayRate;
+
 };
 
 
