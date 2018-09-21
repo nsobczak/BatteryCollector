@@ -5,6 +5,9 @@
 #include "UObject/ConstructorHelpers.h"
 #include "Kismet/GameplayStatics.h" //to be able to access the character
 
+#include "GameFramework/HUD.h"
+#include "Blueprint/UserWidget.h"
+
 ABatteryCollectorGameMode::ABatteryCollectorGameMode()
 {
 	// set default pawn class to our Blueprinted character
@@ -21,6 +24,27 @@ ABatteryCollectorGameMode::ABatteryCollectorGameMode()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
+void ABatteryCollectorGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+
+	//set the score to beat
+	ABatteryCollectorCharacter* mCharacter = Cast<ABatteryCollectorCharacter>(UGameplayStatics::GetPlayerPawn(this, 0));
+	if (mCharacter)
+	{
+		PowerToWin = (mCharacter->GetInitialPower())*1.25f;
+	}
+
+	if (nullptr != HUDClass)
+	{
+		CurrentWidget = CreateWidget<UUserWidget>(GetWorld(), HUDWidgetClass);
+		if (nullptr != CurrentWidget)
+		{
+			CurrentWidget->AddToViewport();
+		}
+	}
+}
+
 void ABatteryCollectorGameMode::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -32,4 +56,7 @@ void ABatteryCollectorGameMode::Tick(float DeltaTime)
 	}
 }
 
-
+float ABatteryCollectorGameMode::GetPowerToWin() const
+{
+	return PowerToWin;
+}
