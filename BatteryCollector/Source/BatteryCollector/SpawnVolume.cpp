@@ -27,9 +27,6 @@ ASpawnVolume::ASpawnVolume()
 void ASpawnVolume::BeginPlay()
 {
 	Super::BeginPlay();
-
-	CurrentSpawnDelay = FMath::FRandRange(SpawnDelayRangeLow, SpawnDelayRangeHigh);
-	GetWorldTimerManager().SetTimer(SpawnTimer, this, &ASpawnVolume::SpawnPickup, CurrentSpawnDelay, false);
 }
 
 // Called every frame
@@ -45,6 +42,21 @@ FVector	ASpawnVolume::GetRandomPointInVolume()
 	FVector spawnExtent = WhereToSpawn->Bounds.BoxExtent;
 
 	return UKismetMathLibrary::RandomPointInBoundingBox(spawnOrigin, spawnExtent);
+}
+
+void ASpawnVolume::SetSpawningActive(bool shouldSpawn)
+{
+	if (shouldSpawn)
+	{
+		//set the timer on spawn pickup
+		CurrentSpawnDelay = FMath::FRandRange(SpawnDelayRangeLow, SpawnDelayRangeHigh);
+		GetWorldTimerManager().SetTimer(SpawnTimer, this, &ASpawnVolume::SpawnPickup, CurrentSpawnDelay, false);
+	}
+	else
+	{
+		//clear the timer on spawn pickup
+		GetWorldTimerManager().ClearTimer(SpawnTimer);
+	}
 }
 
 void ASpawnVolume::SpawnPickup()
@@ -71,7 +83,7 @@ void ASpawnVolume::SpawnPickup()
 
 			//spawn the pickup
 			APickup* const spawnPickup = world->SpawnActor<APickup>(WhatToSpawn, spawnLocation, spawnRotation, spawnParam);
-		
+
 			//reset timer
 			CurrentSpawnDelay = FMath::FRandRange(SpawnDelayRangeLow, SpawnDelayRangeHigh);
 			GetWorldTimerManager().SetTimer(SpawnTimer, this, &ASpawnVolume::SpawnPickup, CurrentSpawnDelay, false);

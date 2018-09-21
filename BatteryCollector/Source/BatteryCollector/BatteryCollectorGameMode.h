@@ -34,7 +34,7 @@ public:
 
 	/** returns the wurrent playing state*/
 	UFUNCTION(BlueprintPure, Category = "Power")
-	EBatteryPlayState GetCurrentState()const;
+		EBatteryPlayState GetCurrentState()const;
 
 	/**sets a new playing state*/
 	void SetCurrentState(EBatteryPlayState newState);
@@ -59,6 +59,11 @@ protected:
 private:
 	/**Keeps track of the current playing state*/
 	EBatteryPlayState Currentstate;
+
+	TArray<class ASpawnVolume*> SpawnVolumeActors;
+
+	/**handle any function call that rely upon changing the playing state of the game*/
+	void HandleNewState(EBatteryPlayState newState);
 
 };
 
